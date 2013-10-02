@@ -111,7 +111,7 @@ namespace Inedo.BuildMasterExtensions.NCover
             var ncoverReportingPath = Path.Combine(configurer.NCoverPath, "NCover.Reporting.exe");
             string coverageFilePath;
             if (!string.IsNullOrEmpty(this.CoverageDataFile))
-                coverageFilePath = Path.Combine(this.RemoteConfiguration.TargetDirectory, this.CoverageDataFile);
+                coverageFilePath = Path.Combine(this.Context.TargetDirectory, this.CoverageDataFile);
             else
                 coverageFilePath = Path.GetTempFileName();
 
@@ -122,7 +122,7 @@ namespace Inedo.BuildMasterExtensions.NCover
             try
             {
                 LogInformation(string.Format("Profiling {0} with NCover...", this.ExePath));
-                ExecuteCommandLine(ncoverConsolePath, consoleArgs, this.RemoteConfiguration.SourceDirectory);
+                ExecuteCommandLine(ncoverConsolePath, consoleArgs, this.Context.SourceDirectory);
 
                 var reportPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
                 try
@@ -130,7 +130,7 @@ namespace Inedo.BuildMasterExtensions.NCover
                     Directory.CreateDirectory(reportPath);
 
                     var reportingArgs = string.Format("\"{0}\" {1}", coverageFilePath, GetNCoverReportingArgs(reportPath, applicationName));
-                    ExecuteCommandLine(ncoverReportingPath, reportingArgs, this.RemoteConfiguration.SourceDirectory);
+                    ExecuteCommandLine(ncoverReportingPath, reportingArgs, this.Context.SourceDirectory);
 
                     return ZipAndEncodeDirectory(reportPath, this.ReportType.ToLower() + ".html");
                 }
